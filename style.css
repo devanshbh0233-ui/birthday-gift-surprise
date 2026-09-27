@@ -1,0 +1,234 @@
+:root {
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+
+    --bg-deep: #3A1B1B;
+    --bg-panel: #4C2626;
+    --bg-panel-2: #5A2E2E;
+    --rule: #6E3A38;
+    --love-red: #FF4136;
+    --love-red-strong: #FF2D2D;
+    --love-red-soft: #FF9B90;
+    --cream: #F7E9DD;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: var(--bg-deep);
+    color: var(--love-red-soft);
+    font-family: 'Nunito Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  ::selection { background: var(--love-red); color: var(--cream); }
+
+  h1, h2, h3, .serif { font-family: 'Cormorant Garamond', serif; }
+
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(70vmax 50vmax at 90% -10%, rgba(255,65,54,0.10), transparent 60%),
+      radial-gradient(60vmax 50vmax at 0% 110%, rgba(255,65,54,0.08), transparent 60%),
+      var(--bg-deep);
+  }
+
+  /* ---------- pages ---------- */
+  main { position: relative; }
+  .slide {
+    display: none;
+    position: relative;
+    z-index: 2;
+    min-height: 100vh;
+    min-height: 100svh;
+    padding: 56px 24px 70px;
+    max-width: 780px;
+    margin: 0 auto;
+    align-items: center;
+  }
+  .slide.active { display: flex; }
+  .slide-inner { width: 100%; text-align: center; }
+
+  .kicker {
+    display: block;
+    color: var(--love-red);
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    margin-bottom: 14px;
+  }
+  h1.big {
+    font-size: clamp(2.6rem, 9vw, 4.6rem);
+    font-style: italic;
+    font-weight: 500;
+    color: var(--love-red-strong);
+    line-height: 1.05;
+    margin: 0 0 20px;
+  }
+  h2.slide-title {
+    font-size: clamp(2rem, 6vw, 2.8rem);
+    font-style: italic;
+    font-weight: 500;
+    color: var(--love-red-strong);
+    margin: 0 0 8px;
+  }
+  .slide-sub {
+    color: var(--cream);
+    opacity: 0.85;
+    font-size: 1.05rem;
+    max-width: 44ch;
+    margin: 0 auto 36px;
+    line-height: 1.55;
+  }
+
+  /* ---------- page 1: gift ---------- */
+  .gift-wrap { display: flex; flex-direction: column; align-items: center; gap: 30px; }
+  .gift-box {
+    width: 96px; height: 84px;
+    position: relative;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    padding: 0;
+  }
+  .gift-box .base {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 60px;
+    background: var(--love-red);
+    border-radius: 6px;
+  }
+  .gift-box .lid {
+    position: absolute; top: 14px; left: -6px; right: -6px;
+    height: 22px;
+    background: var(--love-red-strong);
+    border-radius: 6px;
+    transform-origin: left center;
+    transition: transform .5s cubic-bezier(.34,1.56,.64,1);
+  }
+  .gift-box .ribbon-v {
+    position: absolute; top: 0; bottom: 0; left: 50%;
+    width: 12px; margin-left: -6px;
+    background: var(--cream);
+    opacity: 0.85;
+  }
+  .gift-box.opened .lid { transform: translateY(-30px) rotate(-18deg); }
+  .gift-box.opened .base { background: var(--love-red-strong); }
+  .cta-row { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--love-red);
+    color: var(--bg-deep);
+    border: none;
+    font-weight: 700;
+    font-size: 0.92rem;
+    padding: 13px 22px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: transform .15s ease, background .15s ease;
+  }
+  .btn:hover { transform: translateY(-2px); background: var(--love-red-strong); color: var(--cream); }
+  .btn.ghost {
+    background: transparent;
+    border: 1px solid var(--rule);
+    color: var(--love-red-soft);
+  }
+  .btn.ghost:hover { border-color: var(--love-red); color: var(--love-red); }
+  .btn:focus-visible { outline: 2px solid var(--cream); outline-offset: 2px; }
+  .hint { color: var(--cream); opacity: 0.6; font-size: 0.85rem; }
+
+  /* ---------- media grids (photos/videos) ---------- */
+  .media-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .media-tile {
+    aspect-ratio: 4 / 3;
+    border-radius: 8px;
+    background: var(--bg-panel);
+  }
+  .media-tile img,
+  .media-tile video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    display: block;
+    background: #000;
+  }
+
+  /* ---------- heartfelt message ---------- */
+  .letter {
+    background: var(--bg-panel);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 26px;
+    position: relative;
+    text-align: left;
+  }
+  .letter-text {
+    color: var(--cream);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem;
+    line-height: 1.6;
+    font-style: italic;
+    margin: 0;
+  }
+  .letter-text + .letter-text { margin-top: 16px; }
+
+  /* ---------- finale ---------- */
+  .finale-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 40px 30px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .finale-text { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .finale-line {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(1.2rem, 3.2vw, 1.5rem);
+    color: var(--cream);
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  .hearts-field {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 1;
+  }
+  .heart {
+    position: absolute;
+    bottom: -40px;
+    color: var(--love-red);
+    opacity: 0.18;
+    font-size: 20px;
+    animation: float-up linear infinite;
+  }
+  @keyframes float-up {
+    0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.22; }
+    90% { opacity: 0.14; }
+    100% { transform: translateY(-110vh) translateX(var(--drift, 20px)) rotate(25deg); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .heart { animation: none; opacity: 0.1; }
+    .gift-box .lid, .btn { transition: none; }
+  }
+
+  @media (max-width: 520px) {
+    .slide { padding: 48px 20px 60px; }
+    .media-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  }
