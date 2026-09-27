@@ -16,6 +16,28 @@ const DODGE_LINES = [
 ];
 const MAX_DODGES = 5;
 
+/* ---------------- your photos & videos ----------------
+   1. Create a folder called "images" next to index.html, style.css and
+      script.js, and put your files inside it.
+   2. List the filenames below, in the order you want them to appear.
+   3. Leave an array empty ( [] ) to keep the "add a photo here" placeholder
+      tiles instead. */
+const PHOTO_FILES = [
+  'images/photo1.jpg',
+  'images/photo2.jpg',
+  'images/photo3.jpg',
+  'images/photo4.jpg',
+  'images/photo5.jpg',
+  'images/photo6.jpg',
+  'images/photo7.jpg',
+];
+const VIDEO_FILES = [
+  'images/clip1.mp4',
+  'images/clip2.mp4',
+  'images/clip3.mp4',
+];
+
+
 let current = 0;
 const TOTAL = 9;      // total slides, including the teaser
 const PAGE_TOTAL = 8; // "PAGE X OF Y" only counts the real gift pages
@@ -54,11 +76,25 @@ function buildSlide1() {
     <h1 class="big">Happy Birthday.</h1>
     <p class="slide-sub">This whole little page is your gift — small stops, made just for you. Open it up.</p>
     <div class="gift-wrap">
-      <button class="gift-box" id="giftBox" aria-label="Open your gift">
-        <span class="lid"></span>
-        <span class="base"></span>
-        <span class="ribbon-v"></span>
-      </button>
+      <div class="gift-scene" id="giftScene">
+        <div class="gift-glow" id="giftGlow"></div>
+        <div class="gift-shadow"></div>
+        <button class="gift-box" id="giftBox" aria-label="Open your gift">
+          <span class="lid" id="giftLid">
+            <span class="lid-ribbon-h"></span>
+            <span class="lid-ribbon-v"></span>
+          </span>
+          <span class="bow" id="giftBow">
+            <span class="bow-loop bow-loop-l"></span>
+            <span class="bow-loop bow-loop-r"></span>
+            <span class="bow-knot"></span>
+          </span>
+          <span class="base"></span>
+          <span class="ribbon-v"></span>
+          <span class="ribbon-h"></span>
+        </button>
+        <div class="confetti-field" id="giftConfetti" aria-hidden="true"></div>
+      </div>
       <div class="cta-row">
         <button class="btn" id="openGiftBtn">Open your gift</button>
       </div>
@@ -67,17 +103,26 @@ function buildSlide1() {
   return el;
 }
 
-function buildMediaSlide({ page, title, sub, kind, count }) {
+function buildMediaSlide({ page, title, sub, kind, files, count }) {
   const el = document.createElement('div');
   const grid = document.createElement('div');
   grid.className = 'media-grid';
 
+  const total = (files && files.length) ? files.length : count;
   let tiles = '';
-  for (let i = 0; i < count; i++) {
-    const note = kind === 'video'
-      ? '<!-- Add a video that plays right here on the page, e.g. <video controls src="your-video.mp4"></video> -->'
-      : '<!-- Add a photo here, e.g. <img src="your-photo.jpg" alt=""> -->';
-    tiles += `<div class="media-tile" data-kind="${kind}">${note}</div>`;
+  for (let i = 0; i < total; i++) {
+    const src = (files && files[i]) ? files[i] : null;
+    let inner;
+    if (src) {
+      inner = kind === 'video'
+        ? `<video controls src="${src}"></video>`
+        : `<img src="${src}" alt="">`;
+    } else {
+      inner = kind === 'video'
+        ? '<!-- Add a video that plays right here on the page, e.g. <video controls src="images/clip1.mp4"></video> -->'
+        : '<!-- Add a photo here, e.g. <img src="images/photo1.jpg" alt=""> -->';
+    }
+    tiles += `<div class="media-tile" data-kind="${kind}">${inner}</div>`;
   }
   el.innerHTML = `
     <span class="kicker">PAGE ${page} OF ${PAGE_TOTAL}</span>
@@ -102,26 +147,60 @@ function buildCakeSlide() {
     <h2 class="slide-title">Make a Wish 🎂</h2>
     <p class="slide-sub">Blow out the candles, then cut the first slice.</p>
     <div class="cake-stage">
-      <svg id="cakeSvg" viewBox="0 0 220 200" class="cake-svg">
+      <svg id="cakeSvg" viewBox="0 0 300 210" class="cake-svg">
+        <ellipse class="cake-plate-shadow" cx="130" cy="190" rx="115" ry="11"/>
+        <ellipse class="side-plate" cx="252" cy="178" rx="38" ry="9"/>
+
+        <!-- smoke wisps, hidden until candles are blown out -->
+        <g id="smoke" class="smoke">
+          <path class="smoke-wisp" d="M70,38 C66,28 76,24 72,14" />
+          <path class="smoke-wisp" d="M126,32 C122,22 132,18 128,8" />
+          <path class="smoke-wisp" d="M182,38 C178,28 188,24 184,14" />
+        </g>
+
         <g id="flames">
+          <circle class="flame-glow" cx="70" cy="30" r="11"/>
+          <circle class="flame-glow" cx="126" cy="24" r="11"/>
+          <circle class="flame-glow" cx="182" cy="30" r="11"/>
           <ellipse class="flame" cx="70" cy="30" rx="5" ry="9"/>
-          <ellipse class="flame" cx="110" cy="24" rx="5" ry="9"/>
-          <ellipse class="flame" cx="150" cy="30" rx="5" ry="9"/>
+          <ellipse class="flame" cx="126" cy="24" rx="5" ry="9"/>
+          <ellipse class="flame" cx="182" cy="30" rx="5" ry="9"/>
         </g>
         <rect x="66" y="34" width="4" height="16" fill="#F7E9DD"/>
-        <rect x="106" y="28" width="4" height="16" fill="#F7E9DD"/>
-        <rect x="146" y="34" width="4" height="16" fill="#F7E9DD"/>
-        <g id="cakeHalfLeft" class="cake-half">
-          <rect x="20" y="60" width="90" height="110" rx="10" fill="#FF9B90"/>
-          <rect x="20" y="60" width="90" height="22" rx="8" fill="#FF4136"/>
+        <rect x="122" y="28" width="4" height="16" fill="#F7E9DD"/>
+        <rect x="178" y="34" width="4" height="16" fill="#F7E9DD"/>
+
+        <!-- exposed interior, revealed once the slice lifts away -->
+        <g id="cutFace" class="cut-face">
+          <rect x="150" y="60" width="16" height="110" fill="#F7E9DD"/>
+          <rect x="150" y="94" width="16" height="10" fill="#FF4136"/>
+          <rect x="150" y="132" width="16" height="10" fill="#FF4136"/>
         </g>
-        <g id="cakeHalfRight" class="cake-half">
-          <rect x="110" y="60" width="90" height="110" rx="10" fill="#FF9B90"/>
-          <rect x="110" y="60" width="90" height="22" rx="8" fill="#FF4136"/>
+
+        <!-- remaining cake body (left of the cut line) -->
+        <g id="cakeBody">
+          <rect x="30" y="60" width="130" height="110" rx="14" fill="#FF9B90"/>
+          <rect x="30" y="60" width="130" height="24" rx="10" fill="#FF2D2D"/>
+          <path class="drip" d="M30,80 q8,14 16,0 q8,14 16,0 q8,14 16,0 q8,14 16,0 q8,14 16,0 q8,14 16,0 q8,14 16,0 v-4 h-112 z"/>
+          <circle class="sprinkle" cx="45" cy="72" r="2.4"/>
+          <circle class="sprinkle" cx="75" cy="68" r="2.4"/>
+          <circle class="sprinkle" cx="105" cy="72" r="2.4"/>
+          <circle class="sprinkle" cx="135" cy="68" r="2.4"/>
         </g>
+
+        <!-- the slice: identical visual style, lifted away on cut -->
+        <g id="cakeSlice" class="cake-slice">
+          <rect x="160" y="60" width="40" height="110" rx="14" fill="#FF9B90"/>
+          <rect x="160" y="60" width="40" height="24" rx="10" fill="#FF2D2D"/>
+          <path class="drip" d="M160,80 q8,14 16,0 q8,14 16,0 v-4 h-32 z"/>
+          <circle class="sprinkle" cx="172" cy="70" r="2.4"/>
+          <circle class="sprinkle" cx="190" cy="70" r="2.4"/>
+          <rect x="160" y="60" width="6" height="110" fill="#F7E9DD" opacity="0.9"/>
+        </g>
+
         <g id="knife" class="knife">
-          <rect x="105" y="-10" width="10" height="60" rx="4" fill="#F7E9DD"/>
-          <rect x="100" y="45" width="20" height="10" rx="3" fill="#5A2E2E"/>
+          <rect x="-5" y="0" width="62" height="11" rx="5" fill="#F7E9DD"/>
+          <rect x="52" y="-4" width="16" height="19" rx="4" fill="#5A2E2E"/>
         </g>
       </svg>
       <div class="confetti-field" id="confettiField" aria-hidden="true"></div>
@@ -161,7 +240,7 @@ const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xljdpqbv';
 function buildHerMessageSlide() {
   const el = document.createElement('div');
   el.innerHTML = `
-    <span class="kicker">PAGE 6 OF ${PAGE_TOTAL}</span>
+    <span class="kicker">PAGE 7 OF ${PAGE_TOTAL}</span>
     <h2 class="slide-title">Your Turn 💌</h2>
     <p class="slide-sub">Whatever's on your mind right now — write it here.</p>
     <div class="her-note-box">
@@ -185,7 +264,7 @@ function buildFinaleSlide() {
   const el = document.createElement('div');
   const paragraphs = FINALE_LINES.map(line => `<p class="finale-line">${line}</p>`).join('');
   el.innerHTML = `
-    <span class="kicker">PAGE 7 OF ${PAGE_TOTAL}</span>
+    <span class="kicker">PAGE 6 OF ${PAGE_TOTAL}</span>
     <h2 class="slide-title">One More Thing</h2>
     <p class="slide-sub">A little more, all at once.</p>
     <div class="finale-card">
@@ -212,9 +291,7 @@ function buildGoodbyeSlide() {
         <p class="finale-line">Goodbye for now.</p>
       </div>
     </div>
-    <div class="cta-row" style="margin-top:22px;">
-      <button class="btn continue-btn">Continue</button>
-    </div>
+    <p class="the-end">THE END!</p>
   `;
   return el;
 }
@@ -222,12 +299,12 @@ function buildGoodbyeSlide() {
 const builders = [
   buildTeaserSlide,
   buildSlide1,
-  () => buildMediaSlide({ page: 2, title: 'A Few Favorites', sub: 'Photos worth keeping close. Tap a tile to add your own.', kind: 'photo', count: 4 }),
-  () => buildMediaSlide({ page: 3, title: 'A Little Motion', sub: 'Some moments that move. Tap a tile to add a clip.', kind: 'video', count: 2 }),
+  () => buildMediaSlide({ page: 2, title: 'A Few Favorites', sub: 'Photos worth keeping close. Tap a tile to add your own.', kind: 'photo', count: 4, files: PHOTO_FILES }),
+  () => buildMediaSlide({ page: 3, title: 'A Little Motion', sub: 'Some moments that move. Tap a tile to add a clip.', kind: 'video', count: 2, files: VIDEO_FILES }),
   buildCakeSlide,
   buildMessageSlide,
-  buildHerMessageSlide,
   buildFinaleSlide,
+  buildHerMessageSlide,
   buildGoodbyeSlide
 ];
 
@@ -244,9 +321,11 @@ builders.forEach((build, i) => {
 
 /* ---------------- navigation ---------------- */
 function goTo(index) {
+  const wrapped = index >= TOTAL || index < 0;
   current = (index + TOTAL) % TOTAL;
   document.querySelectorAll('.slide').forEach((s, i) => s.classList.toggle('active', i === current));
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (wrapped && current === 0) resetGiftBox();
 }
 document.addEventListener('keydown', (e) => {
   const tag = document.activeElement && document.activeElement.tagName;
@@ -305,69 +384,144 @@ document.addEventListener('keydown', (e) => {
   });
 })();
 
-/* ---------------- delegated events (gift box, continue) ---------------- */
+/* ---------------- delegated events (continue) ---------------- */
 slidesEl.addEventListener('click', (e) => {
-  if (e.target.id === 'openGiftBtn') {
-    document.getElementById('giftBox').classList.add('opened');
-    setTimeout(() => goTo(2), 550);
-  }
-  if (e.target.closest('#giftBox')) {
-    e.target.closest('#giftBox').classList.toggle('opened');
+  if (e.target.id === 'openGiftBtn' || e.target.closest('#giftBox')) {
+    openGiftSequence();
   }
   if (e.target.id === 'blowBtn') {
-    startCakeScene();
+    blowOutCandles();
   }
   if (e.target.closest('.continue-btn')) {
-    const wasLast = current === TOTAL - 1;
     goTo(current + 1);
-    if (wasLast) {
-      const box = document.getElementById('giftBox');
-      if (box) box.classList.remove('opened');
-    }
   }
 });
 
-/* ---------------- cake cutting animation ---------------- */
-function startCakeScene() {
+/* ---------------- reusable particle burst ---------------- */
+function spawnParticles(field, { count = 24, colors, shapes = ['confetti'], xRange = [40, 60], yStart = '40%', spreadX = 160, fallDistance = 160, durationRange = [1.2, 2.4], delayRange = [0, 0.3] } = {}) {
+  if (!field) return;
+  for (let i = 0; i < count; i++) {
+    const piece = document.createElement('span');
+    const shape = shapes[Math.floor(Math.random() * shapes.length)];
+    piece.className = 'confetti-piece' + (shape === 'crumb' ? ' crumb-piece' : '');
+    piece.style.left = (xRange[0] + Math.random() * (xRange[1] - xRange[0])) + '%';
+    piece.style.top = yStart;
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.setProperty('--drift', (Math.random() * spreadX * 2 - spreadX) + 'px');
+    piece.style.setProperty('--fall', fallDistance + 'px');
+    piece.style.animationDuration = (durationRange[0] + Math.random() * (durationRange[1] - durationRange[0])) + 's';
+    piece.style.animationDelay = (delayRange[0] + Math.random() * (delayRange[1] - delayRange[0])) + 's';
+    field.appendChild(piece);
+    setTimeout(() => piece.remove(), 3200);
+  }
+}
+
+/* ---------------- gift opening: shake -> untie -> pop -> glow -> confetti ---------------- */
+let giftBusy = false;
+function openGiftSequence() {
+  if (giftBusy) return;
+  giftBusy = true;
+  const box = document.getElementById('giftBox');
+  const bow = document.getElementById('giftBow');
+  const lid = document.getElementById('giftLid');
+  const glow = document.getElementById('giftGlow');
+  const field = document.getElementById('giftConfetti');
+  if (!box) { giftBusy = false; return; }
+
+  box.classList.add('shaking');
+
+  setTimeout(() => {
+    box.classList.remove('shaking');
+    bow.classList.add('untied');
+  }, 620);
+
+  setTimeout(() => {
+    lid.classList.add('opened');
+    box.classList.add('opened');
+    glow.classList.add('lit');
+  }, 900);
+
+  setTimeout(() => {
+    spawnParticles(field, {
+      count: 30,
+      colors: ['#FF4136', '#FF9B90', '#F7E9DD', '#FFB6C9', '#FF2D2D'],
+      xRange: [30, 70],
+      yStart: '30%',
+      spreadX: 120,
+      fallDistance: -180,
+      durationRange: [1, 1.8]
+    });
+  }, 1050);
+
+  setTimeout(() => goTo(2), 1650);
+}
+
+function resetGiftBox() {
+  const box = document.getElementById('giftBox');
+  const bow = document.getElementById('giftBow');
+  const lid = document.getElementById('giftLid');
+  const glow = document.getElementById('giftGlow');
+  if (!box) return;
+  box.classList.remove('opened', 'shaking');
+  bow.classList.remove('untied');
+  lid.classList.remove('opened');
+  glow.classList.remove('lit');
+  giftBusy = false;
+}
+
+/* ---------------- cake: blow out candles -> cut -> lift slice ---------------- */
+function blowOutCandles() {
   const flames = document.getElementById('flames');
-  const knife = document.getElementById('knife');
-  const left = document.getElementById('cakeHalfLeft');
-  const right = document.getElementById('cakeHalfRight');
+  const smoke = document.getElementById('smoke');
   const ctaRow = document.getElementById('cakeCtaRow');
   if (!flames) return;
 
   flames.classList.add('out');
+  smoke.classList.add('rising');
   ctaRow.innerHTML = '<button class="btn" id="cutBtn">Cut the cake</button>';
 
   ctaRow.addEventListener('click', function onCut(e) {
     if (e.target.id !== 'cutBtn') return;
     ctaRow.removeEventListener('click', onCut);
-    knife.classList.add('cutting');
-    setTimeout(() => {
-      left.classList.add('split-left');
-      right.classList.add('split-right');
-      burstConfetti();
-      ctaRow.innerHTML = '<button class="btn continue-btn">Continue</button>';
-    }, 500);
+    startCakeCut();
   });
 }
 
-function burstConfetti() {
+function startCakeCut() {
+  const knife = document.getElementById('knife');
+  const slice = document.getElementById('cakeSlice');
+  const cutFace = document.getElementById('cutFace');
+  const cakeBody = document.getElementById('cakeBody');
+  const ctaRow = document.getElementById('cakeCtaRow');
   const field = document.getElementById('confettiField');
-  if (!field) return;
-  const colors = ['#FF4136', '#FF9B90', '#F7E9DD', '#FF2D2D'];
-  for (let i = 0; i < 26; i++) {
-    const piece = document.createElement('span');
-    piece.className = 'confetti-piece';
-    piece.style.left = (40 + Math.random() * 20) + '%';
-    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
-    piece.style.setProperty('--drift', (Math.random() * 160 - 80) + 'px');
-    piece.style.animationDuration = (1.4 + Math.random() * 1.2) + 's';
-    piece.style.animationDelay = (Math.random() * 0.3) + 's';
-    field.appendChild(piece);
-    setTimeout(() => piece.remove(), 3000);
-  }
+
+  knife.classList.add('plunge');
+
+  setTimeout(() => {
+    cakeBody.classList.add('squish');
+    spawnParticles(field, {
+      count: 14,
+      colors: ['#F7E9DD', '#FF9B90', '#5A2E2E'],
+      shapes: ['crumb'],
+      xRange: [55, 65],
+      yStart: '55%',
+      spreadX: 40,
+      fallDistance: 80,
+      durationRange: [0.8, 1.3]
+    });
+  }, 420);
+
+  setTimeout(() => {
+    knife.classList.add('lift');
+    slice.classList.add('lifted');
+    cutFace.classList.add('revealed');
+  }, 620);
+
+  setTimeout(() => {
+    ctaRow.innerHTML = '<button class="btn continue-btn">Continue</button>';
+  }, 1300);
 }
+
 
 /* ---------------- her note: send it via Formspree ---------------- */
 (function setupHerForm() {
