@@ -1,12 +1,4 @@
 /* ---------------- data ---------------- */
-const FINALE_LINES = [
-  "Happy birthday. I mean every word on this little page.",
-  "Whatever this year brings you, I hope it brings you here again, smiling.",
-  "You don't need a reason to be celebrated. Today's just a good excuse.",
-  "May this year be kinder to you than you are to yourself.",
-  "Go on — blow out the candles. I'll still be here after."
-];
-
 const DODGE_LINES = [
   "Nice try 😏",
   "So close!",
@@ -39,8 +31,8 @@ const VIDEO_FILES = [
 
 
 let current = 0;
-const TOTAL = 9;      // total slides, including the teaser
-const PAGE_TOTAL = 8; // "PAGE X OF Y" only counts the real gift pages
+const TOTAL = 8;      // total slides, including the teaser
+const PAGE_TOTAL = 7; // "PAGE X OF Y" only counts the real gift pages
 
 /* ---------------- build slides ---------------- */
 const slidesEl = document.getElementById('slides');
@@ -74,7 +66,7 @@ function buildSlide1() {
   el.innerHTML = `
     <span class="kicker">PAGE 1 OF ${PAGE_TOTAL}</span>
     <h1 class="big">Happy Birthday.</h1>
-    <p class="slide-sub">This whole little page is your gift — small stops, made just for you. Open it up.</p>
+    <p class="slide-sub">This small gift is only for you my friend.... Open the gift whenever you are ready</p>
     <div class="gift-wrap">
       <div class="gift-scene" id="giftScene">
         <div class="gift-glow" id="giftGlow"></div>
@@ -204,6 +196,7 @@ function buildCakeSlide() {
         </g>
       </svg>
       <div class="confetti-field" id="confettiField" aria-hidden="true"></div>
+      <div class="balloon-field" id="balloonField" aria-hidden="true"></div>
     </div>
     <div class="cta-row" id="cakeCtaRow">
       <button class="btn" id="blowBtn">Blow out the candles</button>
@@ -217,14 +210,17 @@ function buildMessageSlide() {
   el.innerHTML = `
     <span class="kicker">PAGE 5 OF ${PAGE_TOTAL}</span>
     <h2 class="slide-title">From the Heart</h2>
-    <p class="slide-sub">Say the real thing here.</p>
+    <p class="slide-sub">Some of the things i wanna say to you on your birthday</p>
     <div class="letter">
       <!--
         Write the birthday message right here, replacing the lines below.
         This page is for reading only on the live site — edit the text
         in this file, not on the page itself.
       -->
-      <p class="letter-text">Write your message here. Replace this line (and add more &lt;p class="letter-text"&gt; lines if you want more than one paragraph) with whatever you actually want to say.</p>
+      <p class="letter-text">Happy Birthday, Chavi... oops, sorry — Chotuu Badmash 😜😜. Yes, I said it, and no, I'm not taking it back, because that's exactly who you are to me. One minute you're the one giving me the wisest, most level-headed advice, and the next you're the biggest troublemaker in the room, dragging me into whatever chaos you've cooked up — and somehow I wouldn't have it any other way.</p>
+      <p class="letter-text">I hope this year brings you everything you've ever wanted in life — the big, loud dreams you talk about for hours, and the small, quiet ones you never say out loud but I know you carry anyway. I hope every plan you've been holding onto starts falling into place, every hard day gets balanced out by ten good ones, and every wish you make this year finds its way back to you, right when you need it most. ❤️❤️</p>
+      <p class="letter-text">My dear best friend, I've always wanted you to become a great person — and the truth is, you already are one. I've watched you grow through things that weren't easy, stumble, dust yourself off, laugh about it later, and come back stronger every single time. That's not luck, that's just who you are, and it makes me endlessly proud to be the one who gets to call you my best friend.</p>
+      <p class="letter-text">So here's to you, Chotuu — to another year of your chaos, your kindness, your ridiculous humor, and everything that makes you, you. Happy birthday. I mean every single word of this, today and always.</p>
     </div>
     <div class="cta-row" style="margin-top:22px;">
       <button class="btn continue-btn">Continue</button>
@@ -240,7 +236,7 @@ const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xljdpqbv';
 function buildHerMessageSlide() {
   const el = document.createElement('div');
   el.innerHTML = `
-    <span class="kicker">PAGE 7 OF ${PAGE_TOTAL}</span>
+    <span class="kicker">PAGE 6 OF ${PAGE_TOTAL}</span>
     <h2 class="slide-title">Your Turn 💌</h2>
     <p class="slide-sub">Whatever's on your mind right now — write it here.</p>
     <div class="her-note-box">
@@ -260,29 +256,12 @@ function buildHerMessageSlide() {
   return el;
 }
 
-function buildFinaleSlide() {
-  const el = document.createElement('div');
-  const paragraphs = FINALE_LINES.map(line => `<p class="finale-line">${line}</p>`).join('');
-  el.innerHTML = `
-    <span class="kicker">PAGE 6 OF ${PAGE_TOTAL}</span>
-    <h2 class="slide-title">One More Thing</h2>
-    <p class="slide-sub">A little more, all at once.</p>
-    <div class="finale-card">
-      <div class="finale-text">${paragraphs}</div>
-    </div>
-    <div class="cta-row" style="margin-top:22px;">
-      <button class="btn continue-btn">Continue</button>
-    </div>
-  `;
-  return el;
-}
-
 function buildGoodbyeSlide() {
   const el = document.createElement('div');
   el.innerHTML = `
-    <span class="kicker">PAGE 8 OF ${PAGE_TOTAL}</span>
-    <h2 class="slide-title">Until Next Year</h2>
-    <p class="slide-sub">That's everything I put together for you.</p>
+    <span class="kicker">PAGE 7 OF ${PAGE_TOTAL}</span>
+    <h2 class="slide-title">Things i promise you this year</h2>
+    <p class="slide-sub">I swear to keep these promises for eternity</p>
     <div class="finale-card">
       <div class="finale-text">
         <p class="finale-line">However today goes, I hope it's a good one, start to finish.</p>
@@ -299,11 +278,10 @@ function buildGoodbyeSlide() {
 const builders = [
   buildTeaserSlide,
   buildSlide1,
-  () => buildMediaSlide({ page: 2, title: 'A Few Favorites', sub: 'Photos worth keeping close. Tap a tile to add your own.', kind: 'photo', count: 4, files: PHOTO_FILES }),
-  () => buildMediaSlide({ page: 3, title: 'A Little Motion', sub: 'Some moments that move. Tap a tile to add a clip.', kind: 'video', count: 2, files: VIDEO_FILES }),
+  () => buildMediaSlide({ page: 2, title: 'A Few Favorites', sub: 'Some of your photos that worth keeping saved for eternity..', kind: 'photo', count: 4, files: PHOTO_FILES }),
+  () => buildMediaSlide({ page: 3, title: 'A Little Motion', sub: 'Some moment of you that i love', kind: 'video', count: 2, files: VIDEO_FILES }),
   buildCakeSlide,
   buildMessageSlide,
-  buildFinaleSlide,
   buildHerMessageSlide,
   buildGoodbyeSlide
 ];
@@ -487,6 +465,10 @@ function blowOutCandles() {
   });
 }
 
+const BALLOON_RISE_MS = 2600;   // slow, gentle rise — keep in sync with the .balloon-rise CSS animation duration
+const BALLOON_COUNT = 15;
+const BALLOON_MAX_DELAY_MS = 500; // balloons launch staggered over this window, not all at once
+
 function startCakeCut() {
   const knife = document.getElementById('knife');
   const slice = document.getElementById('cakeSlice');
@@ -494,6 +476,7 @@ function startCakeCut() {
   const cakeBody = document.getElementById('cakeBody');
   const ctaRow = document.getElementById('cakeCtaRow');
   const field = document.getElementById('confettiField');
+  const balloonField = document.getElementById('balloonField');
 
   knife.classList.add('plunge');
 
@@ -515,11 +498,35 @@ function startCakeCut() {
     knife.classList.add('lift');
     slice.classList.add('lifted');
     cutFace.classList.add('revealed');
+    spawnBalloon(balloonField);
   }, 620);
 
+  // the continue button only appears once all balloons have finished rising to the top
   setTimeout(() => {
     ctaRow.innerHTML = '<button class="btn continue-btn">Continue</button>';
-  }, 1300);
+  }, 620 + BALLOON_RISE_MS + BALLOON_MAX_DELAY_MS);
+}
+
+function spawnBalloon(field) {
+  if (!field) return;
+  const colors = ['var(--love-red-strong)', 'var(--love-red)', 'var(--pink-pop)', 'var(--love-red-soft)'];
+  for (let i = 0; i < BALLOON_COUNT; i++) {
+    const balloon = document.createElement('div');
+    balloon.className = 'balloon';
+    const delay = Math.random() * BALLOON_MAX_DELAY_MS;
+    const drift = Math.random() * 180 - 90;
+    const size = 90 + Math.random() * 90; // big balloons that fill the screen
+    balloon.style.left = (Math.random() * 100) + 'vw';
+    balloon.style.width = size + 'px';
+    balloon.style.height = (size * 1.28) + 'px';
+    balloon.style.marginLeft = (-size / 2) + 'px';
+    balloon.style.animationDelay = delay + 'ms';
+    balloon.style.setProperty('--balloon-drift', drift + 'px');
+    balloon.style.background = `radial-gradient(circle at 32% 28%, var(--cream), ${colors[Math.floor(Math.random() * colors.length)]} 70%)`;
+    balloon.innerHTML = '<span class="balloon-string"></span>';
+    field.appendChild(balloon);
+    setTimeout(() => balloon.remove(), delay + BALLOON_RISE_MS + 150);
+  }
 }
 
 
