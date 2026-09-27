@@ -7,8 +7,18 @@ const FINALE_LINES = [
   "Go on — blow out the candles. I'll still be here after."
 ];
 
+const DODGE_LINES = [
+  "Nice try 😏",
+  "So close!",
+  "Almost had it!",
+  "Not today, cutie.",
+  "Okay okay, last one, promise…"
+];
+const MAX_DODGES = 5;
+
 let current = 0;
-const TOTAL = 6;
+const TOTAL = 9;      // total slides, including the teaser
+const PAGE_TOTAL = 8; // "PAGE X OF Y" only counts the real gift pages
 
 /* ---------------- build slides ---------------- */
 const slidesEl = document.getElementById('slides');
@@ -17,12 +27,32 @@ function heartIcon(size = 30) {
   return `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:${size}px;height:${size}px"><path d="M12 21s-7.5-4.6-10-9.1C.4 8.6 2.2 5 5.7 5c2 0 3.4 1.1 4.3 2.4C10.9 6.1 12.3 5 14.3 5c3.5 0 5.3 3.6 3.7 6.9C19.5 16.4 12 21 12 21z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>`;
 }
 
+function sparkleIcon(size = 16) {
+  return `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:${size}px;height:${size}px"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8L12 2z" fill="currentColor"/></svg>`;
+}
+
+/* ---------- teaser / "click yes" game slide ---------- */
+function buildTeaserSlide() {
+  const el = document.createElement('div');
+  el.innerHTML = `
+    <span class="kicker">${sparkleIcon(14)} A LITTLE GAME FIRST</span>
+    <h1 class="big">Ready for your gift? 🎀</h1>
+    <p class="slide-sub" id="teaserSub">Just click "Yes" and it's all yours…</p>
+    <div class="teaser-stage" id="teaserStage">
+      <button class="btn teaser-yes" id="teaserYes">Yes</button>
+      <button class="btn ghost teaser-no" id="teaserNo">No</button>
+    </div>
+    <p class="hint" id="teaserHint">psst — it might not want to be caught right away</p>
+  `;
+  return el;
+}
+
 function buildSlide1() {
   const el = document.createElement('div');
   el.innerHTML = `
-    <span class="kicker">PAGE 1 OF ${TOTAL}</span>
+    <span class="kicker">PAGE 1 OF ${PAGE_TOTAL}</span>
     <h1 class="big">Happy Birthday.</h1>
-    <p class="slide-sub">This whole little page is your gift — six small stops, made just for you. Open it up.</p>
+    <p class="slide-sub">This whole little page is your gift — small stops, made just for you. Open it up.</p>
     <div class="gift-wrap">
       <button class="gift-box" id="giftBox" aria-label="Open your gift">
         <span class="lid"></span>
@@ -50,7 +80,7 @@ function buildMediaSlide({ page, title, sub, kind, count }) {
     tiles += `<div class="media-tile" data-kind="${kind}">${note}</div>`;
   }
   el.innerHTML = `
-    <span class="kicker">PAGE ${page} OF ${TOTAL}</span>
+    <span class="kicker">PAGE ${page} OF ${PAGE_TOTAL}</span>
     <h2 class="slide-title">${title}</h2>
     <p class="slide-sub">${sub}</p>
   `;
@@ -64,10 +94,49 @@ function buildMediaSlide({ page, title, sub, kind, count }) {
   return el;
 }
 
+/* ---------- cake cutting scene ---------- */
+function buildCakeSlide() {
+  const el = document.createElement('div');
+  el.innerHTML = `
+    <span class="kicker">PAGE 4 OF ${PAGE_TOTAL}</span>
+    <h2 class="slide-title">Make a Wish 🎂</h2>
+    <p class="slide-sub">Blow out the candles, then cut the first slice.</p>
+    <div class="cake-stage">
+      <svg id="cakeSvg" viewBox="0 0 220 200" class="cake-svg">
+        <g id="flames">
+          <ellipse class="flame" cx="70" cy="30" rx="5" ry="9"/>
+          <ellipse class="flame" cx="110" cy="24" rx="5" ry="9"/>
+          <ellipse class="flame" cx="150" cy="30" rx="5" ry="9"/>
+        </g>
+        <rect x="66" y="34" width="4" height="16" fill="#F7E9DD"/>
+        <rect x="106" y="28" width="4" height="16" fill="#F7E9DD"/>
+        <rect x="146" y="34" width="4" height="16" fill="#F7E9DD"/>
+        <g id="cakeHalfLeft" class="cake-half">
+          <rect x="20" y="60" width="90" height="110" rx="10" fill="#FF9B90"/>
+          <rect x="20" y="60" width="90" height="22" rx="8" fill="#FF4136"/>
+        </g>
+        <g id="cakeHalfRight" class="cake-half">
+          <rect x="110" y="60" width="90" height="110" rx="10" fill="#FF9B90"/>
+          <rect x="110" y="60" width="90" height="22" rx="8" fill="#FF4136"/>
+        </g>
+        <g id="knife" class="knife">
+          <rect x="105" y="-10" width="10" height="60" rx="4" fill="#F7E9DD"/>
+          <rect x="100" y="45" width="20" height="10" rx="3" fill="#5A2E2E"/>
+        </g>
+      </svg>
+      <div class="confetti-field" id="confettiField" aria-hidden="true"></div>
+    </div>
+    <div class="cta-row" id="cakeCtaRow">
+      <button class="btn" id="blowBtn">Blow out the candles</button>
+    </div>
+  `;
+  return el;
+}
+
 function buildMessageSlide() {
   const el = document.createElement('div');
   el.innerHTML = `
-    <span class="kicker">PAGE 4 OF ${TOTAL}</span>
+    <span class="kicker">PAGE 5 OF ${PAGE_TOTAL}</span>
     <h2 class="slide-title">From the Heart</h2>
     <p class="slide-sub">Say the real thing here.</p>
     <div class="letter">
@@ -85,11 +154,38 @@ function buildMessageSlide() {
   return el;
 }
 
+/* ---------- her turn to write ---------- */
+// Sent via Formspree straight to the birthday page's owner.
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xljdpqbv';
+
+function buildHerMessageSlide() {
+  const el = document.createElement('div');
+  el.innerHTML = `
+    <span class="kicker">PAGE 6 OF ${PAGE_TOTAL}</span>
+    <h2 class="slide-title">Your Turn 💌</h2>
+    <p class="slide-sub">Whatever's on your mind right now — write it here.</p>
+    <div class="her-note-box">
+      <form id="herForm" action="${FORMSPREE_ENDPOINT}" method="POST">
+        <input type="hidden" name="_subject" value="A note from your birthday page 💌">
+        <textarea id="herNote" name="message" class="her-textarea" rows="6" placeholder="Dear diary..." required></textarea>
+        <div class="cta-row" style="margin-top:16px;">
+          <button class="btn" type="submit" id="sendNoteBtn">Send it</button>
+        </div>
+        <p class="hint" id="noteStatus"></p>
+      </form>
+    </div>
+    <div class="cta-row" style="margin-top:22px;">
+      <button class="btn continue-btn">Continue</button>
+    </div>
+  `;
+  return el;
+}
+
 function buildFinaleSlide() {
   const el = document.createElement('div');
   const paragraphs = FINALE_LINES.map(line => `<p class="finale-line">${line}</p>`).join('');
   el.innerHTML = `
-    <span class="kicker">PAGE 5 OF ${TOTAL}</span>
+    <span class="kicker">PAGE 7 OF ${PAGE_TOTAL}</span>
     <h2 class="slide-title">One More Thing</h2>
     <p class="slide-sub">A little more, all at once.</p>
     <div class="finale-card">
@@ -105,7 +201,7 @@ function buildFinaleSlide() {
 function buildGoodbyeSlide() {
   const el = document.createElement('div');
   el.innerHTML = `
-    <span class="kicker">PAGE 6 OF ${TOTAL}</span>
+    <span class="kicker">PAGE 8 OF ${PAGE_TOTAL}</span>
     <h2 class="slide-title">Until Next Year</h2>
     <p class="slide-sub">That's everything I put together for you.</p>
     <div class="finale-card">
@@ -124,10 +220,13 @@ function buildGoodbyeSlide() {
 }
 
 const builders = [
+  buildTeaserSlide,
   buildSlide1,
   () => buildMediaSlide({ page: 2, title: 'A Few Favorites', sub: 'Photos worth keeping close. Tap a tile to add your own.', kind: 'photo', count: 4 }),
   () => buildMediaSlide({ page: 3, title: 'A Little Motion', sub: 'Some moments that move. Tap a tile to add a clip.', kind: 'video', count: 2 }),
+  buildCakeSlide,
   buildMessageSlide,
+  buildHerMessageSlide,
   buildFinaleSlide,
   buildGoodbyeSlide
 ];
@@ -156,14 +255,67 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'ArrowLeft') goTo(current - 1);
 });
 
+/* ---------------- teaser "runaway yes button" game ---------------- */
+(function setupTeaser() {
+  const stage = document.getElementById('teaserStage');
+  const yesBtn = document.getElementById('teaserYes');
+  const noBtn = document.getElementById('teaserNo');
+  const sub = document.getElementById('teaserSub');
+  const hint = document.getElementById('teaserHint');
+  if (!stage || !yesBtn) return;
+
+  let dodges = 0;
+  let caught = false;
+
+  function dodge() {
+    if (caught) return;
+    const stageRect = stage.getBoundingClientRect();
+    const btnRect = yesBtn.getBoundingClientRect();
+    const maxX = Math.max(stageRect.width - btnRect.width - 8, 0);
+    const maxY = Math.max(stageRect.height - btnRect.height - 8, 0);
+    const x = Math.random() * maxX;
+    const y = Math.random() * maxY;
+    yesBtn.style.left = x + 'px';
+    yesBtn.style.top = y + 'px';
+    sub.textContent = DODGE_LINES[Math.min(dodges, DODGE_LINES.length - 1)];
+    dodges++;
+    if (dodges >= MAX_DODGES) {
+      caught = true;
+      yesBtn.classList.add('catchable');
+      hint.textContent = "okay, it's all yours now";
+    }
+  }
+
+  // desktop: dodge the moment the cursor gets near
+  yesBtn.addEventListener('pointerenter', (e) => {
+    if (e.pointerType === 'mouse') dodge();
+  });
+  // mobile: a tap should dodge rather than register as a click, until caught
+  yesBtn.addEventListener('touchstart', (e) => {
+    if (!caught) { e.preventDefault(); dodge(); }
+  }, { passive: false });
+
+  yesBtn.addEventListener('click', () => {
+    if (!caught) { dodge(); return; }
+    goTo(1);
+  });
+
+  noBtn.addEventListener('click', () => {
+    sub.textContent = "\"No\" isn't on the menu today 💕";
+  });
+})();
+
 /* ---------------- delegated events (gift box, continue) ---------------- */
 slidesEl.addEventListener('click', (e) => {
   if (e.target.id === 'openGiftBtn') {
     document.getElementById('giftBox').classList.add('opened');
-    setTimeout(() => goTo(1), 550);
+    setTimeout(() => goTo(2), 550);
   }
   if (e.target.closest('#giftBox')) {
     e.target.closest('#giftBox').classList.toggle('opened');
+  }
+  if (e.target.id === 'blowBtn') {
+    startCakeScene();
   }
   if (e.target.closest('.continue-btn')) {
     const wasLast = current === TOTAL - 1;
@@ -175,10 +327,89 @@ slidesEl.addEventListener('click', (e) => {
   }
 });
 
-/* ---------------- ambient floating hearts ---------------- */
+/* ---------------- cake cutting animation ---------------- */
+function startCakeScene() {
+  const flames = document.getElementById('flames');
+  const knife = document.getElementById('knife');
+  const left = document.getElementById('cakeHalfLeft');
+  const right = document.getElementById('cakeHalfRight');
+  const ctaRow = document.getElementById('cakeCtaRow');
+  if (!flames) return;
+
+  flames.classList.add('out');
+  ctaRow.innerHTML = '<button class="btn" id="cutBtn">Cut the cake</button>';
+
+  ctaRow.addEventListener('click', function onCut(e) {
+    if (e.target.id !== 'cutBtn') return;
+    ctaRow.removeEventListener('click', onCut);
+    knife.classList.add('cutting');
+    setTimeout(() => {
+      left.classList.add('split-left');
+      right.classList.add('split-right');
+      burstConfetti();
+      ctaRow.innerHTML = '<button class="btn continue-btn">Continue</button>';
+    }, 500);
+  });
+}
+
+function burstConfetti() {
+  const field = document.getElementById('confettiField');
+  if (!field) return;
+  const colors = ['#FF4136', '#FF9B90', '#F7E9DD', '#FF2D2D'];
+  for (let i = 0; i < 26; i++) {
+    const piece = document.createElement('span');
+    piece.className = 'confetti-piece';
+    piece.style.left = (40 + Math.random() * 20) + '%';
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.setProperty('--drift', (Math.random() * 160 - 80) + 'px');
+    piece.style.animationDuration = (1.4 + Math.random() * 1.2) + 's';
+    piece.style.animationDelay = (Math.random() * 0.3) + 's';
+    field.appendChild(piece);
+    setTimeout(() => piece.remove(), 3000);
+  }
+}
+
+/* ---------------- her note: send it via Formspree ---------------- */
+(function setupHerForm() {
+  const form = document.getElementById('herForm');
+  if (!form) return;
+  const status = document.getElementById('noteStatus');
+  const sendBtn = document.getElementById('sendNoteBtn');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const note = document.getElementById('herNote');
+    if (!note.value.trim()) return;
+
+    sendBtn.disabled = true;
+    sendBtn.textContent = 'Sending…';
+    status.textContent = '';
+
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { Accept: 'application/json' }
+      });
+      if (res.ok) {
+        status.textContent = 'Sent ✓';
+        sendBtn.textContent = 'Sent';
+        note.disabled = true;
+      } else {
+        throw new Error('Formspree error');
+      }
+    } catch (err) {
+      sendBtn.disabled = false;
+      sendBtn.textContent = 'Send it';
+      status.textContent = "Couldn't send just now — check your connection and try again.";
+    }
+  });
+})();
+
+/* ---------------- ambient floating hearts + sparkles ---------------- */
 (function seedHearts() {
   const field = document.getElementById('heartsField');
-  const count = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 12;
+  const count = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 14;
   for (let i = 0; i < count; i++) {
     const size = 14 + Math.random() * 14;
     const h = document.createElement('div');
@@ -189,7 +420,7 @@ slidesEl.addEventListener('click', (e) => {
     h.style.animationDelay = (Math.random() * 14) + 's';
     h.style.width = size + 'px';
     h.style.height = size + 'px';
-    h.innerHTML = heartIcon(size);
+    h.innerHTML = i % 3 === 0 ? sparkleIcon(size) : heartIcon(size);
     field.appendChild(h);
   }
 })();
